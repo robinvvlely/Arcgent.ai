@@ -1,191 +1,191 @@
-# A2 Logistics — AI Implementation Strategy
+# A2 Logistics — AI-implementatiestrategie
 
-> Meeting prep brief for ArcGent. Source: https://www.a2logistics.com (researched 2026-05-06).
+> Voorbereidingsdocument voor het ArcGent-gesprek met A2 Logistics. Bron: https://www.a2logistics.com (onderzocht op 2026-05-06).
 
 ---
 
-## 1. Company Snapshot
+## 1. Bedrijfsprofiel
 
-**Who they are.** A2 Logistics is a Dutch international freight forwarder ("expediteur") based in 's-Hertogenbosch (Den Bosch), in business 15+ years, ~35 employees. They run an **asset-light** model — no own fleet — coordinating shipments through a network of contracted carriers and short-sea operators.
+**Wie ze zijn.** A2 Logistics is een Nederlandse internationale expediteur, gevestigd in 's-Hertogenbosch (Den Bosch), 15+ jaar actief, ~35 medewerkers. Ze werken **asset-light** — geen eigen wagenpark — en coördineren zendingen via een netwerk van vaste vervoerders en short-sea operators.
 
-**What they sell.**
+**Wat ze verkopen.**
 
-| Service | Notes |
+| Dienst | Toelichting |
 |---|---|
-| Road freight (FTL) | General + exceptional (oversized) cargo |
-| Groupage | Consolidated LTL via own DC at Koenendelseweg, Den Bosch |
-| Short Sea Shipping | Multimodal sea+road, e.g. Italy → Scandinavia |
-| Hazardous (ADR) | Full ADR-compliant handling |
-| Temperature-controlled | "Frost-free" and refrigerated, esp. Norway |
-| Door-to-door + customs/CMR docs | Full forwarding incl. POD, customs, FENEX terms |
+| Wegtransport (FTL) | Reguliere én exceptionele (oversize) lading |
+| Groupage | Geconsolideerde LTL via eigen DC aan de Koenendelseweg, Den Bosch |
+| Short Sea Shipping | Multimodaal sea+road, bv. Italië → Scandinavië |
+| Gevaarlijke stoffen (ADR) | Volledig ADR-conform |
+| Geconditioneerd vervoer | "Vorstvrij" en gekoeld, vooral richting Noorwegen |
+| Deur-tot-deur incl. douane/CMR | Volledige expeditie incl. POD, douane, FENEX-condities |
 
-**Where they sell.** Specialist on lanes that big carriers under-serve:
+**Waar ze actief zijn.** Specialist op trajecten waar de grote vervoerders het laten afweten:
 
-- **Ireland** — described as their "specialty"; team led by Arjan Pastoors, sales: Remon Boons, Tom van den Hurk, Raphaël Timmermans.
-- **Finland, Norway, Sweden, Scandinavia** — high-frequency runs; sales: Jason Sloekers, Sebastiaan Ploeger, Jaco van den Beuken.
-- **Europe Mainland** as origin (collection across all of Europe).
+- **Ierland** — door henzelf benoemd als specialiteit; teamlead Arjan Pastoors, sales: Remon Boons, Tom van den Hurk, Raphaël Timmermans.
+- **Finland, Noorwegen, Zweden, Scandinavië** — hoogfrequente ritten; sales: Jason Sloekers, Sebastiaan Ploeger, Jaco van den Beuken.
+- **Europa-mainland** als oorsprong (collectie door heel Europa).
 
-**How they sell.**
+**Hoe ze verkopen.**
 
-- Quote SLA: **non-binding offer within 30 minutes** on weekdays.
-- Planning desk staffed **24/7**.
-- Multilingual: **NL, EN, DE, ES, IT** (5 languages).
-- Channels: phone + email + contact form (no customer portal visible).
-- Compliance: CMR insurance throughout Europe, FENEX (Dutch forwarding) terms.
+- Offerte-SLA: **vrijblijvende offerte binnen 30 minuten** op werkdagen.
+- Planningsdesk **24/7 bemand**.
+- Meertalig: **NL, EN, DE, ES, IT** (5 talen).
+- Kanalen: telefoon + e-mail + contactformulier (geen klantportaal zichtbaar).
+- Compliance: CMR-verzekering binnen heel Europa, FENEX-condities.
 
-**Org structure (relevant for AI rollout).**
+**Organisatiestructuur (relevant voor AI-uitrol).**
 
-- General mgmt: Sander Vos, Dave van der Loo
-- Sales (per region) — Ireland team + Scandinavia team
-- Customer Service: Margarita Florez, Larissa Doomernik (Ireland)
-- Planning: split into Ireland desk, Scandinavia desk, Europe Mainland desk (~10 planners total)
-- Accounting: Kelly Coort, Martijn Kuppens, Henry van den Boogaard
-
----
-
-## 2. Where AI Bites — Pain Map
-
-Reading their site against a typical asset-light forwarder operating model, the friction is concentrated in five workflows:
-
-1. **Quote-to-offer.** "30-min response" = humans typing. At ~35 staff with multiple sales people across two regions, quoting is a meaningful chunk of headcount. Every quote needs: parsing the inbound email, matching cargo to a lane/mode, looking up rates from contractor network, drafting in the right language.
-
-2. **Carrier selection from a network.** They don't own trucks — every load is matched to a contractor. That's a structured decision (lane, equipment, ADR, temp, history, price) repeated daily. Today: planner judgment + Rolodex.
-
-3. **Customer service in 5 languages.** Status questions, POD requests, ETA changes, claims. High-volume, repetitive, low-margin work currently absorbed by planners and customer service.
-
-4. **Documentation.** CMR, packing lists, customs paperwork, PODs. Mostly PDF/scan. Manual data re-entry into TMS / spreadsheets / accounting.
-
-5. **24/7 planning desk.** Off-hours coverage is expensive; most off-hours requests are status checks and standard quotes — exactly what an agent can do alone.
-
-**Strategic angle for the pitch:** in an asset-light forwarder, **labour is the cost of goods sold**. Margin lives in (a) quote speed × hit rate, (b) carrier rate buy vs. customer sell, (c) ops staff productivity. AI moves all three at once.
+- Algemeen management: Sander Vos, Dave van der Loo
+- Sales (per regio) — Ierland-team + Scandinavië-team
+- Klantenservice: Margarita Florez, Larissa Doomernik (Ierland)
+- Planning: gesplitst in Ierland-desk, Scandinavië-desk, Europa-mainland-desk (~10 planners totaal)
+- Boekhouding: Kelly Coort, Martijn Kuppens, Henry van den Boogaard
 
 ---
 
-## 3. Quick Wins — 30 to 90 Days
+## 2. Waar AI bijt — pijnpuntenoverzicht
 
-Ranked by ROI / effort. These are pilot-sized, with clear before/after metrics.
+Als we hun website tegen het standaard operating model van een asset-light expediteur leggen, zit de wrijving in vijf workflows:
 
-### QW1 — AI Quote Assistant *(recommended pilot)*
-- **What.** Inbound quote emails parsed → shipment fields extracted (origin, dest, dims, weight, cargo, ADR, temp, ready date) → matched to lane → draft offer pre-filled in customer's language for planner approval.
-- **Before.** 30-min response, planner-typed.
-- **After.** Draft ready in <60 sec; planner edits + sends. Target: **median response 2 min, after-hours coverage with no humans**.
-- **KPI.** Time-to-quote, quotes-per-planner-per-day, after-hours response rate, hit rate (quote → booking).
-- **Effort.** 4–6 weeks. Connect to a shared inbox + their rate sheet/TMS.
-- **Why this first.** Highest visibility, clear metric, human stays in approval loop, and the "30-min promise" is *already on their homepage* — easy to tell the win story.
+1. **Offerte-tot-aanbod.** "Reactie binnen 30 min" = mensen die typen. Met ~35 medewerkers en meerdere salesmensen over twee regio's, kost offreren een serieus stuk van de FTE-capaciteit. Iedere offerte vereist: inkomende mail lezen, lading koppelen aan traject/modaliteit, tarieven opzoeken bij contractanten, opstellen in de juiste taal.
 
-### QW2 — Multilingual Customer-Service Agent
-- **What.** Answers FAQ, status, POD, ETA-change, invoice questions in NL/EN/DE/ES/IT. Pulls live status from carrier emails / EDI / portals.
-- **After.** Deflects 50–70% of inbound service email; the rest gets routed pre-summarised to the right desk (Ireland / Scandinavia / Mainland).
-- **KPI.** % auto-resolved, avg handle time on remaining tickets, after-hours deflection.
+2. **Vervoerderkeuze uit het netwerk.** Geen eigen vrachtwagens — elke lading wordt aan een contractant gekoppeld. Dat is een **gestructureerde beslissing** (traject, materieel, ADR, temperatuur, historie, prijs) die dagelijks honderden keren wordt herhaald. Vandaag: planner-intuïtie + Rolodex.
 
-### QW3 — Document Extraction Agent
-- **What.** OCR + LLM extraction from CMR, packing lists, customs docs, signed PODs. Pushes structured data into TMS + accounting.
-- **After.** Eliminates manual re-typing; speeds invoice cycle; auto-flags missing/illegible PODs.
-- **KPI.** Docs/day automated, days-to-invoice, error rate vs. manual.
+3. **Klantenservice in 5 talen.** Statusvragen, POD-verzoeken, ETA-wijzigingen, claims. Hoog volume, repetitief, lage marge — werk dat nu door planners en customer service wordt opgevangen.
 
-### QW4 — Email Triage & Routing
-- **What.** Inbound mail classified (quote / status / claim / invoice / spam) and routed to the right desk with a 1-line summary.
-- **After.** Planners spend less time triaging shared inboxes.
-- **KPI.** Time-to-first-touch, mis-route rate.
+4. **Documentenstroom.** CMR's, paklijsten, douanepapieren, POD's. Veelal PDF/scan. Handmatig overtypen naar TMS / Excel / boekhouding.
+
+5. **24/7 planningsdesk.** Avond- en weekenddekking is duur, terwijl het meeste avondvolume bestaat uit statusvragen en standaard-offertes — exact het type werk dat een agent zelfstandig kan afhandelen.
+
+**Strategische framing voor het gesprek:** bij een asset-light expediteur is **arbeid de kostprijs van de dienst**. De marge zit in (a) offerte-snelheid × hit rate, (b) inkooptarief vs. verkooptarief van vervoerders, (c) productiviteit van het ops-team. AI verschuift alle drie tegelijk.
 
 ---
 
-## 4. Autonomous Agents — 90 to 180 Days
+## 3. Quick wins — 30 tot 90 dagen
 
-Once quick wins are live and the team trusts the system, escalate from "draft for human" to "act, then notify."
+Gerangschikt op ROI / inspanning. Pilot-grootte met heldere voor/na-meetwaarden.
 
-### A1 — Autonomous Quoting Agent
-End-to-end: parse → price → send offer → follow up on no-reply, with **human approval thresholds** (e.g. agent auto-sends below €X / standard lane / standard equipment; planner approves ADR, oversized, exception lanes).
+### QW1 — AI Offerte-Assistent *(aanbevolen pilot)*
+- **Wat.** Inkomende offerteaanvragen worden geparseerd → ladingvelden geëxtraheerd (oorsprong, bestemming, afmetingen, gewicht, ladingtype, ADR, temperatuur, ophaaldatum) → gematcht aan traject → conceptofferte voorbereid in de taal van de klant ter goedkeuring door de planner.
+- **Voor.** 30 min reactietijd, getypt door een planner.
+- **Na.** Concept klaar binnen <60 sec; planner past aan + verstuurt. Doel: **mediane reactietijd 2 min, avond/nacht-dekking zonder mensen**.
+- **KPI.** Tijd-tot-offerte, offertes-per-planner-per-dag, dekking buiten kantooruren, hit rate (offerte → boeking).
+- **Inspanning.** 4–6 weken. Koppeling met gedeelde mailbox + tarievenlijst/TMS.
+- **Waarom als eerste.** Hoogste zichtbaarheid, helder meetbaar, mens blijft in de goedkeuringslus, en de "30-minutenbelofte" staat **al op hun homepage** — het verhaal van de winst is direct uit te leggen.
 
-### A2 — Carrier-Matching & Dispatch Agent
-Given a confirmed load, picks the best carrier from the contractor network based on:
-- Lane fit (history on Ireland/Nordic routes)
-- Equipment + ADR / temp capability
-- Last 90-day price + on-time performance
-- Capacity availability
-Sends rate request, books, generates rate confirmation. Planner sees a queue of "agent decisions" rather than building each one.
+### QW2 — Meertalige Klantenservice-Agent
+- **Wat.** Beantwoordt FAQ, status, POD, ETA-wijziging, factuurvragen in NL/EN/DE/ES/IT. Trekt live status uit vervoerder-mail / EDI / portalen.
+- **Na.** Vangt 50–70% van inkomende servicemail af; de rest wordt vooraf samengevat doorgezet naar de juiste desk (Ierland / Scandinavië / Mainland).
+- **KPI.** % automatisch opgelost, gemiddelde afhandeltijd op overige tickets, deflectie buiten kantooruren.
+
+### QW3 — Documentextractie-Agent
+- **Wat.** OCR + LLM-extractie uit CMR, paklijsten, douanepapieren, getekende POD's. Pusht gestructureerde data naar TMS + boekhouding.
+- **Na.** Geen handmatig overtypen meer; snellere factuurcyclus; automatische signalering van ontbrekende of onleesbare POD's.
+- **KPI.** Documenten/dag geautomatiseerd, dagen-tot-factuur, foutmarge t.o.v. handmatig.
+
+### QW4 — Mailtriage & Routing
+- **Wat.** Inkomende mail wordt geclassificeerd (offerte / status / claim / factuur / spam) en gerouteerd naar de juiste desk met een 1-regelige samenvatting.
+- **Na.** Planners besteden minder tijd aan triage van gedeelde inboxen.
+- **KPI.** Tijd-tot-eerste-respons, mis-routing percentage.
+
+---
+
+## 4. Autonome agents — 90 tot 180 dagen
+
+Zodra de quick wins live zijn en het team het systeem vertrouwt, schalen we op van "concept voor mens" naar "handelen, daarna melden".
+
+### A1 — Autonome Offerte-Agent
+End-to-end: lezen → prijzen → aanbod versturen → opvolgen bij geen reactie, met **goedkeuringsdrempels** (bv. agent verstuurt zelf onder €X / standaardtraject / standaardmaterieel; planner keurt ADR, oversize en uitzonderingstrajecten goed).
+
+### A2 — Vervoerder-matching & Dispatch-Agent
+Bij een bevestigde boeking selecteert de agent de beste vervoerder uit het netwerk op basis van:
+- Trajectfit (historie op Ierland-/Nordic-routes)
+- Materieel + ADR / temperatuur-capability
+- Tarief + on-time performance laatste 90 dagen
+- Beschikbare capaciteit
+Stuurt vrachtaanvraag, boekt, genereert rate confirmation. De planner ziet een wachtrij van "agent-beslissingen" in plaats van elke boeking zelf op te bouwen.
 
 ### A3 — Track-and-Trace Concierge
-Polls carrier status (email parsing, EDI, portal scraping), detects delays vs. promised ETA, **proactively** notifies the customer in their language with a new ETA and the reason. Reduces inbound "where's my truck?" volume to near zero.
+Pollt vervoerderstatus (e-mail-parsing, EDI, portal-scraping), detecteert vertragingen t.o.v. beloofde ETA en stuurt de klant **proactief** een nieuwe ETA + reden in zijn taal. Reduceert inkomende "waar is mijn truck?"-vragen tot bijna nul.
 
 ### A4 — Groupage Load-Planning Agent
-Optimises the daily Den Bosch consolidation: bin-packing, weight distribution, drop sequence on each Nordic / Ireland trailer. Suggests when to hold a shipment for tomorrow vs. dispatch today.
+Optimaliseert de dagelijkse Den Bosch-consolidatie: bin-packing, gewichtsverdeling, droplaadvolgorde per Nordic-/Ierland-trailer. Geeft advies wanneer een zending vandaag mee moet of beter morgen kan.
 
-### A5 — Sales-Prospecting Agent (growth play)
-For the Ireland and Scandinavia sales teams: continuously identifies shippers in NL / DE / IT / ES with cargo flow toward A2's specialty lanes (using web signals, registry data, freight indices), drafts a personalised outreach in target language, hands off warm leads.
+### A5 — Sales-Prospecting Agent (groei-play)
+Voor de Ierland- en Scandinavië-salesteams: identificeert continu verladers in NL / DE / IT / ES met goederenstroom richting A2's specialiteitstrajecten (via webdata, registratiedata, freight-indices), stelt een gepersonaliseerd outreach-bericht op in de taal van de prospect, draagt warme leads over.
 
 ### A6 — Claims & Exception Agent
-Detects delays / damage signals from driver and customer comms, pre-drafts the CMR claim, gathers POD + photos, routes to ops.
+Detecteert vertragings- of schadesignalen uit chauffeurs- en klant-communicatie, stelt vooraf de CMR-claim op, verzamelt POD + foto's, routeert naar ops.
 
-### A7 — Finance / AR Agent
-Matches POD → invoice → payment, flags discrepancies, chases late payers in their own language with appropriate tone (formal DE, direct NL, etc.).
-
----
-
-## 5. The Recommended Pilot
-
-**Project:** Multilingual AI Quote Assistant (QW1)
-**Duration:** 4–6 weeks
-**Scope:** Ireland + Scandinavia inbound quote email — the two flagship lanes.
-**Deliverable:**
-- Inbox-integrated agent, planner-in-the-loop UI
-- Extracts shipment fields, drafts offer in customer's language, pre-fills against their rate matrix
-- Dashboard: response time, volume, hit rate
-**Success criteria:**
-- Median response time ≤ 2 min (vs. 30-min SLA)
-- ≥ 60% of inbound quote requests fully drafted by agent
-- 100% off-hours coverage with no extra headcount
-
-This is the "easy yes": the metric they advertise on their homepage, improved by an order of magnitude, with humans still approving every offer. After 6 weeks of evidence, the conversation about A2 (autonomous quoting) becomes much easier.
+### A7 — Finance / AR-Agent
+Matcht POD → factuur → betaling, signaleert verschillen, herinnert openstaande klanten in hun eigen taal en passende toon (formeel DE, direct NL, etc.).
 
 ---
 
-## 6. Discovery Questions — Bring to the Meeting
+## 5. De aanbevolen pilot
 
-Get these answered before scoping anything serious.
+**Project:** Meertalige AI Offerte-Assistent (QW1)
+**Looptijd:** 4–6 weken
+**Scope:** Inkomende offertes voor Ierland + Scandinavië — de twee speerpunttrajecten.
+**Oplevering:**
+- Inbox-geïntegreerde agent met planner-in-the-loop UI
+- Extraheert ladingvelden, stelt offerte op in taal van klant, vult vooraf in tegen tarievenmatrix
+- Dashboard: reactietijd, volume, hit rate
+**Succescriteria:**
+- Mediane reactietijd ≤ 2 min (vs. de 30-min SLA)
+- ≥ 60% van inkomende offerteaanvragen volledig opgesteld door de agent
+- 100% dekking buiten kantooruren zonder extra FTE
+
+Dit is de "makkelijke ja": de KPI die ze zelf op hun homepage adverteren, met een orde van grootte verbetering, terwijl mensen elke offerte blijven goedkeuren. Na 6 weken bewijs is het gesprek over A2 (autonoom offreren) een stuk eenvoudiger te voeren.
+
+---
+
+## 6. Discovery-vragen — meenemen naar het gesprek
+
+Krijg deze beantwoord vóórdat je iets serieus scope.
 
 **Stack & data**
-1. Which TMS / planning system do you use? (key — integration is what gates speed of rollout, per industry data)
-2. Where do contractor rates live today? (TMS, Excel, planner head?)
-3. Customer portal — is one on the roadmap, or do you prefer to stay email-first?
-4. Do carriers send status via EDI, email, portal, or phone?
+1. Welk TMS / planningssysteem gebruiken jullie? (cruciaal — integratie bepaalt de uitrolsnelheid, blijkt uit de branche-data)
+2. Waar staan de tarieven van vervoerders vandaag? (TMS, Excel, planner-hoofd?)
+3. Klantportaal — staat dat op de roadmap, of blijven jullie liever e-mail-first?
+4. Sturen vervoerders status via EDI, e-mail, portaal of telefoon?
 
-**Volume & money**
-5. Quote requests per day across both desks? Quote-to-booking conversion?
-6. What % of inbound email is repetitive (status / POD / ETA) vs. revenue-generating?
-7. After-hours volume — what's the cost of staffing 24/7 vs. the missed-quote cost?
-8. Average gross margin on a groupage shipment vs. FTL — where do you actually make money?
+**Volume & geld**
+5. Aantal offerteaanvragen per dag over beide desks? Conversie offerte → boeking?
+6. Welk percentage van inkomende mail is repetitief (status / POD / ETA) vs. omzetgenererend?
+7. Buiten-kantooruren-volume — wat kost 24/7-bezetting vs. de gemiste-offerte-kost?
+8. Gemiddelde brutomarge op een groupage-zending vs. een FTL — waar wordt het geld écht verdiend?
 
-**Strategy & people**
-9. Where do you lose deals — price, speed, capacity, language?
-10. Headcount split: planners / sales / customer service / accounting?
-11. Growth plan — more lanes, more volume on existing lanes, or both?
-12. Any AI projects already attempted? What worked / didn't?
-
----
-
-## 7. Pitch Frame for the Meeting
-
-Three sentences to anchor the conversation:
-
-> **"You already promise a 30-minute quote and a personal touch in 5 languages. AI doesn't replace either — it lets you keep both at 10× the volume, 24/7, without hiring."**
-
-> **"Asset-light forwarders make money on quote speed, carrier-buy intelligence, and ops productivity. We can move all three with a single pilot in 4–6 weeks."**
-
-> **"Start with quoting because it's measurable on day one. Then we layer carrier-matching, track-and-trace, and finance — building toward an autonomous Ireland desk and an autonomous Scandinavia desk that the human team supervises rather than operates."**
+**Strategie & mensen**
+9. Waar verliezen jullie deals — op prijs, snelheid, capaciteit of taal?
+10. FTE-verdeling: planning / sales / klantenservice / boekhouding?
+11. Groeiplan — meer trajecten, meer volume op bestaande trajecten, of allebei?
+12. Eerdere AI-projecten geprobeerd? Wat werkte / wat niet?
 
 ---
 
-## 8. Industry Benchmarks Worth Quoting
+## 7. Pitch-framing voor het gesprek
 
-From 2026 3PL / freight-brokerage AI research (sources below):
+Drie zinnen om het gesprek mee te ankeren:
 
-- **Exception handling / quote response** offers fastest ROI: **30–60 day payback**.
-- Mid-market 3PLs deploying AI across the five core workflows (orchestration, carrier allocation, exception handling, customer-portal automation, WMS↔TMS sync) see **60–120 day payback**, **$700K–$2.4M annualised savings**.
-- Real broker case: rate-quote response went from 60–65% answered (in up to 20 min) → **100% answered in 32 sec**.
-- Critical success factor across deployments is **clean integration between TMS and surrounding systems**, not the AI model itself.
+> **"Jullie beloven al een offerte binnen 30 minuten en persoonlijk contact in 5 talen. AI vervangt geen van beide — het zorgt dat jullie beide kunnen vasthouden bij 10× het volume, 24/7, zonder bij te hoeven nemen."**
 
-**Sources**
+> **"Asset-light expediteurs verdienen op offerte-snelheid, vervoerder-inkoopintelligentie en ops-productiviteit. Met één pilot van 4–6 weken bewegen we alle drie."**
+
+> **"Begin bij offreren, want het is vanaf dag één meetbaar. Daarna stapelen we vervoerder-matching, track-and-trace en finance erbovenop — toewerkend naar een autonome Ierland-desk en autonome Scandinavië-desk die het menselijke team superviseert in plaats van zelf draait."**
+
+---
+
+## 8. Branchecijfers om te citeren
+
+Uit het 2026 3PL-/freight-brokerage-AI-onderzoek (bronnen onderaan):
+
+- **Exception handling / offerte-respons** levert de snelste ROI: **30–60 dagen terugverdientijd**.
+- Mid-market 3PL's die AI uitrollen over de vijf kernworkflows (orderorkestratie, vervoerderallocatie, exception handling, klantportaalautomatisering, WMS↔TMS-sync) zien **60–120 dagen terugverdientijd**, **$700K–$2.4M jaarlijkse besparing**.
+- Concrete broker-case: offerte-respons ging van 60–65% beantwoord (binnen tot 20 min) → **100% beantwoord in 32 sec**.
+- Kritieke succesfactor in alle implementaties is een **schone integratie tussen TMS en omliggende systemen**, niet het AI-model zelf.
+
+**Bronnen**
 - [AI for 3PLs: The Complete 2026 Operator's Playbook — Debales AI](https://debales.ai/blog/ai-for-3pls-the-complete-2026-operator-s-playbook)
 - [Best AI Tools for Freight Brokers in 2026 — Lunapath](https://www.lunapath.ai/post/best-ai-tools-freight-brokers-2026)
 - [Transportation Trends 2026: The 3PL Broker Advantage — WSI](https://www.wsinc.com/blog/transportation-trends-2026-part-three)
