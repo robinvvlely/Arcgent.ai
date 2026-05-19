@@ -28,6 +28,7 @@ const Navbar: React.FC = () => {
     { label: 'Services', path: '/services' },
     { label: 'Why AI-SOPs', path: '/why-ai-sops' },
     { label: 'About', path: '/about' },
+    { label: 'DCA Calculator', path: '/sp500-dca-calculator' },
   ];
 
   return (

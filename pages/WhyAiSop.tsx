@@ -54,7 +54,7 @@ const WhyAiSop: React.FC = () => {
                       </div>
                       <h3 className="text-xl font-bold text-stone-900 mb-3">Roles & Logic Paths</h3>
                       <p className="text-stone-600 leading-relaxed">
-                          Decision trees mapped out clearly: "If client budget > €10k, route to Senior Agent. Else, route to Standard Agent."
+                          Decision trees mapped out clearly: "If client budget &gt; €10k, route to Senior Agent. Else, route to Standard Agent."
                       </p>
                   </div>
 
