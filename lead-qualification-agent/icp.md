@@ -1,3 +1,48 @@
+---
+# ─────────────────────────────────────────────────────────────────────────
+# MACHINE-READABLE SEARCH CONFIG (consumed by find_leads.py)
+# This YAML front-matter holds the firmographic + persona filters used to
+# SOURCE leads from the Ark AI API. The human-readable rubric below is used to
+# SCORE them. Edit the values here to retarget sourcing — no code changes.
+# Ark enums: seniority = founder|c_suite|head|manager|senior|mid-level|junior
+#            department = sales|marketing|engineering|product_management|
+#                         operations|finance|hr|...
+# ─────────────────────────────────────────────────────────────────────────
+search:
+  batch_size: 20            # stop after this many verified leads are written
+  companies_per_page: 25    # company-search page size (1–100)
+  people_per_company: 5     # decision-maker candidates to pull per company
+
+  company:                  # → Ark Company Search (firmographics)
+    industries: []          # e.g. ["software", "logistics"]; [] = any
+    keywords: []            # e.g. ["manual process", "back office"]; [] = any
+    locations:              # account.location matches (NL + EU)
+      - Netherlands
+      - Belgium
+      - Germany
+      - France
+      - Spain
+      - Italy
+      - Ireland
+      - Sweden
+      - Denmark
+      - Poland
+    employee_size:          # ICP floor: 10+ employees
+      min: 10
+      max: 10000
+
+  persona:                  # → Ark People Search (decision-maker)
+    seniority:              # ops decision-maker or founder
+      - founder
+      - c_suite
+      - head
+      - manager
+    departments:
+      - operations
+    titles: []              # optional title keywords to prefer when picking,
+                            # e.g. ["operations", "COO", "founder"]; [] = any
+---
+
 # Ideal Customer Profile (ICP) & Scoring Rubric
 
 This file is the single source of truth for what a "good" lead looks like.
