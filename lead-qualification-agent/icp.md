@@ -1,66 +1,142 @@
-# Ideal Customer Profile (ICP)
+# Ideal Customer Profile (ICP) & Scoring Rubric
 
 This file is the single source of truth for what a "good" lead looks like.
-The agent reads it before sourcing, scoring, and drafting outreach. Edit the
-values below to retarget the agent — no code changes required.
-
-> Everything here is a placeholder. Fill in the real targeting criteria for
-> your campaign.
+The agent reads it before sourcing, scoring, and drafting outreach. Each lead
+is scored **0–100** by summing the criteria below. Edit anything here to
+retarget the agent — no code changes required.
 
 ---
 
-## 1. Company firmographics
+## How the rubric works
 
-- **Industry / vertical:** _e.g. B2B SaaS, fintech, healthcare IT_
-- **Sub-verticals to include:** _..._
-- **Sub-verticals to exclude:** _..._
-- **Company size (headcount):** _e.g. 50–500 employees_
-- **Annual revenue:** _e.g. $5M–$100M ARR_
-- **Funding stage:** _e.g. Seed to Series B_
-- **Geographies:** _e.g. US, UK, EU; exclude APAC_
-- **Tech stack signals:** _e.g. uses Salesforce, runs on AWS, has a React frontend_
+- There are **5 criteria**. Each is worth a fixed number of points (its
+  **weight**). The weights sum to **100**.
+- For every lead, the agent rates each criterion **Strong / Medium / Weak** and
+  awards points from that criterion's band.
+- The final score is the sum of the five awarded values (0–100).
+- Leads scoring **≥ 70** are **good-fit** and move on to outreach drafting.
 
-## 2. Buying triggers (nice-to-have signals)
+```
+final_score = pain_fit + decision_maker + company_size + geography + b2b_model
+```
 
-- _Recently raised funding_
-- _Hiring for relevant roles_
-- _Launched a new product line_
-- _Leadership change in target department_
+### Point bands per rating
 
-## 3. Target personas (who we sell to)
+Each criterion awards **100% / 60% / 20%** of its weight for
+**Strong / Medium / Weak**. A hard disqualifier (see below) zeroes the whole
+score regardless of the bands.
 
-| Persona | Titles | Department | Seniority |
-| ------- | ------ | ---------- | --------- |
-| Primary | _VP Sales, Head of Growth_ | Sales | VP / Director |
-| Secondary | _RevOps Manager_ | Operations | Manager |
+| Criterion (weight)            | Strong (100%) | Medium (60%) | Weak (20%) |
+| ----------------------------- | ------------- | ------------ | ---------- |
+| Repetitive manual processes (30) | 30 | 18 | 6 |
+| Decision-maker access (25)       | 25 | 15 | 5 |
+| Company size (20)                | 20 | 12 | 4 |
+| Geography (15)                   | 15 | 9  | 3 |
+| B2B business model (10)          | 10 | 6  | 2 |
+| **Total**                        | **100** | — | — |
 
-## 4. Disqualifiers (hard filters — drop immediately)
+> To retarget: change the weights (keep them summing to 100), rewrite the
+> signal bullets, or add/remove a whole criterion block. The agent reads the
+> signals as the definition of each rating.
 
-- _Competitors_
-- _Existing customers_
-- _Companies below minimum size_
-- _Regions we cannot sell to_
+---
 
-## 5. Scoring weights
+## Criterion 1 — Repetitive manual processes  ·  weight 30
 
-How much each dimension contributes to the final fit score (0–100).
-Weights should sum to 100.
+*The core pain we automate. The strongest predictor of fit.*
 
-| Dimension            | Weight |
-| -------------------- | ------ |
-| Industry match       | 25     |
-| Company size match   | 20     |
-| Persona / title match| 25     |
-| Buying triggers      | 15     |
-| Geography match      | 15     |
+- **Strong (30):** Clear, visible repetitive manual work — manual data entry,
+  copy-paste between tools, spreadsheet-driven ops, manual invoicing/onboarding,
+  a back office or ops team doing the same task daily. Job posts for "operations
+  coordinator", "data entry", or many ops/admin headcount relative to size.
+- **Medium (18):** Some manual workflows likely but not obvious; uses a few
+  disconnected SaaS tools with no integration layer; growing fast (process debt
+  forming) but not yet visibly painful.
+- **Weak (6):** Already heavily automated, engineering-led, or product is itself
+  a workflow-automation tool; little sign of repetitive manual work.
 
-**Qualification threshold:** leads scoring **≥ 70** are considered good-fit and
-move on to outreach drafting.
+## Criterion 2 — Decision-maker access  ·  weight 25
 
-## 6. Value proposition & outreach context
+*We sell to the person who owns the process and can say yes.*
 
-- **What we sell:** _one-line description_
-- **Core pain we solve:** _..._
-- **Proof points / social proof:** _case studies, notable customers, metrics_
+- **Strong (25):** A reachable **founder/owner** (small co.) **or** an **ops
+  decision-maker** — Head/Director/VP of Operations, COO, Operations Manager —
+  with a verified email.
+- **Medium (15):** Relevant person exists but is one level off (e.g. ops analyst,
+  office manager, or a founder at a larger company who delegates), or contact
+  found but email not yet verified.
+- **Weak (5):** No clear process owner identifiable; only generic role inboxes
+  (info@, sales@) or gatekept enterprise org with no reachable ops lead.
+
+## Criterion 3 — Company size  ·  weight 20
+
+*Big enough to feel the pain, small enough to move fast. Floor: 10 employees.*
+
+- **Strong (20):** **10–200 employees** — large enough to have repetitive
+  process volume, small enough for a fast buying decision.
+- **Medium (12):** **200–500 employees**, or **5–9 employees** (just under the
+  floor but plausibly scaling into it).
+- **Weak (4):** **500+ employees** (long sales cycles) — still B2B but harder.
+
+## Criterion 4 — Geography  ·  weight 15
+
+*Where we can sell and support effectively.*
+
+- **Strong (15):** Based in the **Netherlands (NL)**.
+- **Medium (9):** Based elsewhere in the **EU / EEA**.
+- **Weak (3):** Outside the EU but in a supportable timezone/market (e.g. UK).
+
+## Criterion 5 — B2B business model  ·  weight 10
+
+*We sell to businesses, not consumers.*
+
+- **Strong (10):** Clearly **B2B** — sells products/services to other businesses.
+- **Medium (6):** **B2B2C or hybrid** with a meaningful B2B operations side.
+- **Weak (2):** Primarily **B2C**, but with internal ops we could still help.
+
+---
+
+## Hard disqualifiers (score → 0, drop immediately)
+
+A lead matching any of these is removed regardless of its rubric score:
+
+- Pure **B2C** with no business operations to automate
+- **Fewer than 5 employees** (below even the medium band)
+- Outside supported geographies (neither EU/EEA nor an explicitly allowed market)
+- **Competitor** (builds automation/agent tooling) or **existing customer**
+- No reachable contact and no verifiable company information
+
+---
+
+## Qualification threshold
+
+- **≥ 70** → good-fit → draft personalized outreach
+- **50–69** → borderline → hold for review / lighter-touch sequence
+- **< 50** → skip
+
+Adjust this threshold to tighten or loosen the funnel.
+
+---
+
+## Value proposition & outreach context
+
+Used by the drafting step to personalize messages to good-fit leads.
+
+- **What we sell:** AI agents that automate repetitive, manual business
+  operations.
+- **Core pain we solve:** Teams losing hours to manual data entry, copy-paste,
+  and spreadsheet-driven workflows.
+- **Proof points:** _add case studies / metrics / notable customers_
 - **Call to action:** _e.g. book a 20-min intro call_
-- **Tone:** _e.g. concise, friendly, no fluff_
+- **Tone:** concise, direct, no fluff.
+
+---
+
+## Swapping in your own ICP
+
+1. Rewrite the **weight** and **signal bullets** for each criterion to match
+   your market. Keep the weights summing to 100.
+2. Add or delete whole criterion blocks as needed (and update the point-band
+   table and the `final_score` formula comment to match).
+3. Update the **hard disqualifiers** and **threshold**.
+4. Update the **value proposition** block so outreach reflects what you sell.
